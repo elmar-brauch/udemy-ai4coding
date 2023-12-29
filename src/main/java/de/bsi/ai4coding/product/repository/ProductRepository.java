@@ -1,5 +1,10 @@
 package de.bsi.ai4coding.product.repository;
 
-public class ProductRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
 
+import de.bsi.ai4coding.product.model.Product;
+
+import java.util.UUID;
+
+public interface ProductRepository extends JpaRepository<Product, UUID> {
 }
