@@ -1,13 +1,25 @@
 package de.bsi.ai4coding.product.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import de.bsi.ai4coding.product.model.Price;
 import de.bsi.ai4coding.product.model.Product;
 import de.bsi.ai4coding.product.repository.ProductRepository;
-
-import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/products")
@@ -27,8 +39,30 @@ public class ProductController {
     }
 
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
-        return productRepository.save(product);
+    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+        if (isProductValidForCreation(product)) {
+            Product savedProduct = productRepository.save(product);
+            return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing or null fields in product");
+        }
+    }
+
+    private boolean isProductValidForCreation(Product product) {
+        return product.getName() != null &&
+               product.getCategory() != null &&
+               product.getPrice() != null &&
+               isPriceValid(product.getPrice()) &&
+               product.getAttributes() != null &&
+               !product.getAttributes().isEmpty();
+    }
+
+    private boolean isPriceValid(Price price) {
+        return price.getCurrency() != null &&
+               price.getDutyFreeAmount() != null &&
+               price.getTaxIncludedAmount() != null &&
+               price.getTaxOnlyAmount() != null &&
+               Objects.nonNull(price.getTaxRate());
     }
 
     @PutMapping("/{id}")

@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Embeddable
 @Data
-class Price {
+public class Price {
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
