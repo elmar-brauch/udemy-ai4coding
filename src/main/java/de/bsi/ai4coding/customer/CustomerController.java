@@ -27,4 +27,8 @@ public class CustomerController {
         logger.info("POST /customers - Created new customer with ID: {}", customerId);
         return customer;
     }
+    
+    void deleteAllCustomers() {
+    	customerMap.clear();
+    }
 }
