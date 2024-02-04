@@ -44,11 +44,22 @@ public class ProductController {
         }
     }
 
+    /**
+     * GET endpoint to find a Product by its ID.
+     * @param id The ID of the Product to be found.
+     * @return The Product with the given ID or null if not found.
+     */
     @GetMapping("/{id}")
     public Product getProductById(@PathVariable UUID id) {
         return productRepository.findById(id).orElse(null);
     }
 
+    /**
+     * POST endpoint to create a new Product.
+     * @param product The Product to be created.
+     * @return The created Product with its ID.
+     * @throws ResponseStatusException If the Product is not valid for creation.
+     */
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         if (isProductValidForCreation(product)) {
