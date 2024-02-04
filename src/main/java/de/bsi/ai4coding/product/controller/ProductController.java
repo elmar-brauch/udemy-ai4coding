@@ -1,25 +1,17 @@
 package de.bsi.ai4coding.product.controller;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-
 import de.bsi.ai4coding.product.model.Price;
 import de.bsi.ai4coding.product.model.Product;
 import de.bsi.ai4coding.product.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/products")
@@ -28,9 +20,28 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
+    // GET endpoint to find all Products matching filter criteria name and category.
+    // Filters are optional. Use annotation for request parameters.
     @GetMapping
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<Product> getProducts(@RequestParam(required = false) String name,
+                                     @RequestParam(required = false) Product.Category category) {
+        // Validate name to be a German word and category to be a valid enum value.
+        // If validation fails, throw a ResponseStatusException with status code 400.
+        if (name != null && !name.matches("[A-Za-zÄäÖöÜüß]+")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid name");
+        }
+        if (category != null && !List.of(Product.Category.values()).contains(category)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid category");
+        }
+        if (name != null && category != null) {
+            return productRepository.findByNameAndCategory(name, category);
+        } else if (name != null) {
+            return productRepository.findByName(name);
+        } else if (category != null) {
+            return productRepository.findByCategory(category);
+        } else {
+            return productRepository.findAll();
+        }
     }
 
     @GetMapping("/{id}")

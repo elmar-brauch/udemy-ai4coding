@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "17b54988-6021-450d-a563-c29b1c85d7e2",
+		"_postman_id": "4842730e-5e80-4306-a231-0f60ea47d473",
 		"name": "AI4Coding API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Super Widget\",\r\n    \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\r\n    \"category\": \"TOY\",\r\n    \"price\": {\r\n        \"currency\": \"EURO\",\r\n        \"dutyFreeAmount\": 15.99,\r\n        \"taxIncludedAmount\": 19.19,\r\n        \"taxOnlyAmount\": 3.20,\r\n        \"taxRate\": 20\r\n    },\r\n    \"attributes\": {\r\n        \"color\": \"red\",\r\n        \"size\": \"medium\",\r\n        \"manufacturer\": \"Widget Corp\"\r\n    }\r\n}\r\n",
+					"raw": "{\r\n    \"name\": \"Buntstift\",\r\n    \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\r\n    \"category\": \"TOY\",\r\n    \"price\": {\r\n        \"currency\": \"EURO\",\r\n        \"dutyFreeAmount\": 15.99,\r\n        \"taxIncludedAmount\": 19.19,\r\n        \"taxOnlyAmount\": 3.20,\r\n        \"taxRate\": 20\r\n    },\r\n    \"attributes\": {\r\n        \"color\": \"red\",\r\n        \"size\": \"medium\",\r\n        \"manufacturer\": \"Widget Corp\"\r\n    }\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -65,13 +65,24 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/products",
+					"raw": "localhost:8080/products?category=TOY",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
 						"products"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "TOY"
+						},
+						{
+							"key": "name",
+							"value": "Buntstift",
+							"disabled": true
+						}
 					]
 				}
 			},
