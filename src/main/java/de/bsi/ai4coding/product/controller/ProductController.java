@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -20,29 +19,7 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
-    // GET endpoint to find all Products matching filter criteria name and category.
-    // Filters are optional. Use annotation for request parameters.
-    @GetMapping
-    public List<Product> getProducts(@RequestParam(required = false) String name,
-                                     @RequestParam(required = false) Product.Category category) {
-        // Validate name to be a German word and category to be a valid enum value.
-        // If validation fails, throw a ResponseStatusException with status code 400.
-        if (name != null && !name.matches("[A-Za-zÄäÖöÜüß]+")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid name");
-        }
-        if (category != null && !List.of(Product.Category.values()).contains(category)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid category");
-        }
-        if (name != null && category != null) {
-            return productRepository.findByNameAndCategory(name, category);
-        } else if (name != null) {
-            return productRepository.findByName(name);
-        } else if (category != null) {
-            return productRepository.findByCategory(category);
-        } else {
-            return productRepository.findAll();
-        }
-    }
+    // TODO demo GET endpoint for all products (add filters later)
 
     /**
      * GET endpoint to find a Product by its ID.
@@ -87,18 +64,18 @@ public class ProductController {
                Objects.nonNull(price.getTaxRate());
     }
 
+    // TODO Bugfix demo
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable UUID id, @RequestBody Product productDetails) {
-        return productRepository.findById(id).map(product -> {
-            product.setName(productDetails.getName());
-            product.setCategory(productDetails.getCategory());
-            product.setPrice(productDetails.getPrice());
-            product.setAttributes(productDetails.getAttributes());
-            return productRepository.save(product);
-        }).orElseGet(() -> {
-            productDetails.setId(id);
-            return productRepository.save(productDetails);
-        });
+    public Product updateProduct(@PathVariable UUID id, @RequestBody Product update) {
+        if (id != null || update != null || isProductValidForCreation(update)) {
+            var existingProduct = productRepository.findById(id).get();
+            existingProduct.setName(update.getName());
+            existingProduct.setCategory(update.getCategory());
+            existingProduct.setPrice(update.getPrice());
+            existingProduct.setAttributes(update.getAttributes());
+            return productRepository.save(existingProduct);
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing or null fields in product");
     }
 
     @DeleteMapping("/{id}")
